@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Валентинка с анимацией по нажатию</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #ffe6f2;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+
+        .valentine-card {
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .heart {
+            width: 100px;
+            height: 100px;
+            background-color: #ff4d4d;
+            position: relative;
+            transform: rotate(-45deg);
+            margin: 0 auto;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: '';
+            width: 100px;
+            height: 100px;
+            background-color: #ff4d4d;
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        .heart::before {
+            top: -50px;
+            left: 0;
+        }
+
+        .heart::after {
+            top: 0;
+            left: 50px;
+        }
+
+        .instruction {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #cc0066;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 24px;
+            color: #cc0066;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .explosion {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .heart-particle {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #ff4d4d;
+            transform: rotate(-45deg);
+            animation: explode 1s ease-out forwards;
+        }
+
+        .heart-particle::before,
+        .heart-particle::after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            background-color: #ff4d4d;
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        .heart-particle::before {
+            top: -10px;
+            left: 0;
+        }
+
+        .heart-particle::after {
+            top: 0;
+            left: 10px;
+        }
+
+        @keyframes pulse {
+            0% { transform: rotate(-45deg) scale(1); }
+            50% { transform: rotate(-45deg) scale(1.1); }
+            100% { transform: rotate(-45deg) scale(1); }
+        }
+
+        @keyframes explode {
+            0% { transform: translate(0, 0) rotate(-45deg) scale(1); opacity: 1; }
+            100% { transform: translate(var(--x), var(--y)) rotate(-45deg) scale(0); opacity: 0; }
+        }
+
+        /* Адаптация для мобильных устройств */
+        @media (max-width: 600px) {
+            .heart {
+                width: 80px;
+                height: 80px;
+            }
+
+            .heart::before,
+            .heart::after {
+                width: 80px;
+                height: 80px;
+            }
+
+            .heart::before {
+                top: -40px;
+            }
+
+            .heart::after {
+                left: 40px;
+            }
+
+            .instruction {
+                font-size: 16px;
+            }
+
+            .message {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="valentine-card" onclick="startAnimation()">
+        <div class="heart" id="heart"></div>
+        <div class="instruction" id="instruction">Нажми на моё сердце, чтоб узнать, что там внутри!</div>
+        <div class="message" id="message">Моя любовь к тебе бесконечная, Мой Любимый Пупик 💖</div>
+    </div>
+
+    <script>
+        function startAnimation() {
+            const heart = document.getElementById('heart');
+            const instruction = document.getElementById('instruction');
+            const message = document.getElementById('message');
+            const explosion = document.createElement('div');
+            explosion.className = 'explosion';
+
+            // Убираем инструкцию
+            instruction.style.opacity = 0;
+
+            // Добавляем анимацию пульсации сердца
+            heart.style.animation = 'pulse 1.5s infinite';
+
+            // Создаём 500 сердечек для взрыва
+            for (let i = 0; i < 500; i++) {
+                const heartParticle = document.createElement('div');
+                heartParticle.className = 'heart-particle';
+                const angle = Math.random() * 2 * Math.PI;
+                const distance = Math.random() * 800; // Увеличиваем расстояние разлёта
+                heartParticle.style.setProperty('--x', `${Math.cos(angle) * distance}px`);
+                heartParticle.style.setProperty('--y', `${Math.sin(angle) * distance}px`);
+                explosion.appendChild(heartParticle);
+            }
+
+            document.body.appendChild(explosion);
+
+            // Показываем сообщение после завершения анимации
+            setTimeout(() => {
+                explosion.remove();
+                message.style.opacity = 1;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
